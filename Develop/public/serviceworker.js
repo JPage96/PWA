@@ -30,18 +30,6 @@ self.addEventListener("install", function(event) {
 });
 
 
-/*
-  INFO: This is the heart of the PWA functionality. This code tells the service worker to listen for any events 
-  where a call is made to our server api. Remember that fetch is a utility built into every browser that allows 
-  it to make server calls. So we are listening for when fetch is being used. You can use all of this code 
-  below as-is. Again, more cryptic code.
-
-  Notice that if the route being requested (line 64) includes "/api/" we are assuming that it's an api call. 
-  In other words, it's a request for data. This is the kind of thing that would fail if there's no Internet 
-  connection. So, if the Internet *is* working, we tell the service worker to make a cached copy of any 
-  data that comes back from that request. If the Internet *isn't* working, we tell the service worker to 
-  look up that cached copy and use that instead.
-*/
 self.addEventListener("fetch", function(event) {
   // cache all get requests to /api routes
   if (event.request.url.includes("/api/")) {
@@ -66,10 +54,6 @@ self.addEventListener("fetch", function(event) {
     return;
   }
 
-/*
-  INFO: This code is triggered if the request is NOT an api request. In the case of this app, that means 
-  it's a request for the home page, so we tell the service worker to grab its local copy of the home page.
-*/
   event.respondWith(
     fetch(event.request).catch(function() {
       return caches.match(event.request).then(function(response) {
@@ -84,11 +68,6 @@ self.addEventListener("fetch", function(event) {
   );
 });
 
-/*
-  INFO: More cryptic code. Basically, whenever our service worker is activated, we want to clear out
-  anything it has in its cache and get a fresh new cache set up. This code looks like it was written 
-  by someone with a background in Medieval Torture.
-*/
 self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (keyList) {
