@@ -35,18 +35,6 @@ function saveRecord(record) {
   store.add(record);
 }
 
-/*
-  INFO: When our Internet connection is restored, we need to update
-  the server with any new/changed data.
-
-  We have a route on the server which will be listening for anytime 
-  we need to to a bulk upodate. This name of this route is:
-
-  /api/transaction/bulk
-
-  TODO: replace the string named "OBJECT_STORE" with the objectStore 
-  variable.
-*/
 function checkDatabase() {
   const transaction = db.transaction(["objectStore"], "readwrite");
   const store = transaction.objectStore("objectStore");
@@ -55,16 +43,8 @@ function checkDatabase() {
   getAll.onsuccess = function() {
     if (getAll.result.length > 0) {
       
-      /*
-        INFO: This is a route we would create in Express (it's already done)
-        to handle this kind of bulk update.
-      */
 
-      /*
-        TODO: Insert the route name specified above.
-      */
-
-      fetch("INSERT_UPDATE_ROUTE_NAME_HERE", {
+      fetch("/api/transaction/bulk", {
         method: "POST",
         body: JSON.stringify(getAll.result),
         headers: {
@@ -76,7 +56,6 @@ function checkDatabase() {
         return response.json();
       })
       .then(() => {
-        // delete indexedDB records if the update is successful
         const transaction = db.transaction([objectStore], "readwrite");
         const store = transaction.objectStore(objectStore);
         store.clear();
@@ -85,5 +64,4 @@ function checkDatabase() {
   };
 }
 
-// listen for app coming back online
 window.addEventListener("online", checkDatabase);
